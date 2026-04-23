@@ -1,7 +1,6 @@
 *** Settings ***
 Library     OperatingSystem
 Library     String
-Library     ../lib/testkeywords.py
 
 *** Test Cases ***
 Check Ignition wih Left Indicator
@@ -91,6 +90,6 @@ Check Ignition Signal with Engine Start
    Get_Signal    Igntion_cyc    0x1    
 
    [Teardown]     Send_Signal    Igntion_cyc    0x0    
-                  Send_Signal    Igntion_cyc    0x0    
+                  Send_Signal    engine_start    0x0    
                   PPS_OFF            
 

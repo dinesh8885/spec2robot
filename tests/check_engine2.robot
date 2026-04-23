@@ -1,7 +1,6 @@
 *** Settings ***
 Library     OperatingSystem
 Library     String
-Library     ../lib/testkeywords.py
 
 *** Test Cases ***
 Check Ignition wih Hazard light
