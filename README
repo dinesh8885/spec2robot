@@ -1,0 +1,145 @@
+# Spec2Robot
+
+Spec2Robot is a lightweight automation utility that converts structured test assets such as Excel sheets and XML-based specifications into executable Robot Framework test suites, then runs them on a schedule or on demand through a Flask API.
+
+This project is a good fit for teams that still receive test definitions in document-style assets but want a cleaner path into repeatable automated validation.
+
+## Where This Can Be Used
+
+- Automotive validation flows where test steps originate from system specs, calibration sheets, or engineering-owned spreadsheets
+- Hardware-in-the-loop and bench testing pipelines that need quick conversion from manual test definitions to executable checks
+- Regression pack creation for embedded systems, ECU verification, and interface validation
+- Internal QA tooling where non-developers maintain test content in Excel/XML and engineers need Robot Framework output
+- Demo or prototype environments that need scheduled test generation plus API-triggered execution
+
+## What It Does
+
+- Scans the project workspace for `.xlsx` and `.xml` assets
+- Converts supported assets into `.robot` test suites
+- Executes generated tests with Robot Framework
+- Stores Robot outputs in a local `results/` directory
+- Exposes simple Flask endpoints for health checks, status, manual trigger, and log forwarding
+
+## Supported Inputs
+
+Current support is intentionally focused on:
+
+- `.xlsx`
+- `.xml`
+
+The design can be extended later for formats such as JSON, ARXML, DBC, or custom schema-based inputs by adding new parser modules.
+
+## Project Structure
+
+```text
+.
+├── main.py                     # Flask app, scheduler, and execution entrypoint
+├── lib/
+│   ├── testcase_generator.py   # Excel/XML to Robot Framework conversion
+│   ├── testkeywords.py         # Example Robot keywords
+│   └── listener.py             # Live execution logging helper
+├── resources/
+│   └── Robot_import.py         # Robot libraries used in generated suites
+├── testcases/                  # Generated Robot suites
+├── config.ini                  # Scheduler and runtime configuration
+├── check.xml                   # Sample XML asset
+├── check_engine.xlsx           # Sample Excel asset
+└── Dockerfile                  # Container runtime
+```
+
+## Quick Start
+
+### 1. Install dependencies
+
+```bash
+pip install -r Requirements.txt
+```
+
+### 2. Review configuration
+
+`config.ini` controls whether the scheduler is enabled and how often the generation job runs.
+
+```ini
+[DEFAULT]
+SCHEDULER_ENABLED=TRUE
+SECONDS=1200
+URL=
+```
+
+### 3. Start the service
+
+```bash
+python3 main.py
+```
+
+### 4. Trigger execution manually
+
+```bash
+curl http://localhost:5000/trigger
+```
+
+## API Endpoints
+
+- `GET /` returns a small service summary
+- `GET /health` returns service health
+- `GET /status` returns the latest execution logs
+- `GET /trigger` regenerates tests and executes them immediately
+- `GET /send_data` forwards logs to a configured REST endpoint
+
+## Example Workflow
+
+1. A validation engineer updates an Excel or XML test asset.
+2. Spec2Robot parses the asset and generates Robot Framework test cases.
+3. The service runs the generated suites.
+4. The latest execution logs are available through the API or forwarded to another system.
+
+## Why This Project Is Useful
+
+Many teams want automation, but their source of truth is still a spreadsheet, table export, or document-managed test definition. Spec2Robot helps bridge that gap without forcing a full test-authoring platform from day one.
+
+That makes it useful as:
+
+- a migration step from manual to automated testing
+- a prototype for model-based or spec-driven validation
+- a backend utility inside a larger QA or test management platform
+
+## Current Scope
+
+This repository is positioned as a working prototype / foundation project. It demonstrates:
+
+- asset-driven test generation
+- Robot Framework execution
+- scheduled automation
+- simple REST integration hooks
+
+It does not yet include:
+
+- Jira-specific integration
+- a browser-based test editor
+- a central database for ARXML / DBC catalogs
+- advanced role-based access or multi-user workflows
+
+## Docker
+
+```bash
+docker build -t spec2robot .
+docker run -p 5000:5000 spec2robot
+```
+
+## Ideas For Future Extension
+
+- Add JSON, ARXML, and DBC parsers
+- Push execution summaries to Jira, Azure DevOps, or test management platforms
+- Add a web UI for editing test steps and reviewing generated suites
+- Persist signal catalogs and test metadata in a database
+- Export richer reports and dashboards
+
+## Portfolio Positioning
+
+If you add this to your GitHub profile, describe it as:
+
+`A Flask + Robot Framework automation utility that transforms structured validation assets into executable test suites for embedded and system-level testing workflows.`
+
+## License
+
+Add the license that matches how you want to share the project on GitHub, such as MIT.
